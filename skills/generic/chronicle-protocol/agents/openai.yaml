@@ -1,0 +1,3 @@
+interface:
+  display_name: "The Chronicle Protocol"
+  short_description: "Save and resume factual project checkpoints across sessions"

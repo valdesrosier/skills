@@ -1,20 +1,35 @@
-# ArcGIS Skills
+# Skills
 
-A set of [agent skills](https://github.com/mattpocock/skills) that give an AI coding assistant (GitHub Copilot, Claude, and other skill-aware agents) real, current expertise across the Esri / ArcGIS developer stack — client and authoring surfaces like **Experience Builder**, the **ArcGIS Maps SDK for JavaScript**, **Arcade**, constrained **ArcGIS Online HTML/CSS**, and the **ArcGIS API for Python & Notebooks**; server-side **Custom Data Feeds** provider development; and authoritative **docs lookup**.
+A collection of agent skills for GitHub Copilot, Claude, Codex, and other skill-aware coding assistants, organized into **generic skills** for cross-stack workflows and **ArcGIS-specific skills** for the Esri developer ecosystem.
 
-They are designed to **compose with [Matt Pocock's skills](https://github.com/mattpocock/skills)** — see [Recommended: pair with Matt Pocock's skills](#recommended-pair-with-matt-pococks-skills) — but every skill here works fully standalone with none of his installed.
+The skills are designed to **compose with [Matt Pocock's skills](https://github.com/mattpocock/skills)**, but work without his collection installed.
 
 ## The skills
 
-| Skill                        | What it does                                                                                                                                                                                                                                                     |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **arcgis-docs-lookup**       | Routes documentation questions to the authoritative Esri source (developers / pro / enterprise), never ArcMap or Desktop, version-scoping every Enterprise URL. Escalates to a `research` skill for deep investigations.                                         |
-| **arcade**                   | Authors Arcade expressions for the correct **profile** (popup, labeling, field calculation, attribute rules) and verifies every global and function exists at the target Arcade version.                                                                         |
-| **arcgis-html-css**          | Writes and repairs paste-ready HTML/CSS for the ArcGIS Online Hub text card source editor and Map Viewer popup text, using each surface's sanitizer rules and accessible narrow-width layouts.                                                                   |
-| **js-sdk**                   | Builds and migrates apps with the ArcGIS Maps SDK for JavaScript — resolves the target version, knows the 3.x / 4.x / 5.x generation boundaries, avoids the dead AMD path, and pins Calcite.                                                                     |
-| **python-notebook**          | Writes ArcGIS API for Python for hosted ArcGIS Notebooks (Standard vs Advanced runtimes) or local installs, with a hard guard around destructive data operations.                                                                                                |
-| **exb-widget**               | Builds Experience Builder Developer Edition custom widgets at the correct **compile version**, checks the Node/pnpm gate, and holds the manifest invariants.                                                                                                     |
-| **arcgis-custom-data-feeds** | Builds ArcGIS Enterprise **Custom Data Feeds** — Node.js/Koop providers that expose an external system as a Feature Service — pinned to the target Enterprise version and its 12.0 generation boundary, with a guard around editable providers' upstream writes. |
+### Generic skills
+
+[`skills/generic/`](skills/generic/) is the home for reusable workflows that are not tied to a particular platform or vendor.
+
+| Skill                                                            | What it does                                                                                                                                                             |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [chronicle-protocol](skills/generic/chronicle-protocol/SKILL.md) | Saves a factual project checkpoint when you say "Chronicle" and guides resuming from it in a fresh session, with a plain-chat fallback when file writing is unavailable. |
+| [demo-director](skills/generic/demo-director/SKILL.md)           | Plans, scripts, rehearses, records, and finishes software demos across browser and desktop apps, with explicit script approval and final quality checks.                 |
+
+For general-purpose workflows such as code review, debugging, research, and test-driven development, see [Matt Pocock's collection](#recommended-pair-with-matt-pococks-skills). Those are separate dependencies, not skills redistributed by this repo.
+
+### ArcGIS-specific skills
+
+[`skills/arcgis/`](skills/arcgis/) contains the Esri / ArcGIS skills:
+
+| Skill                                                                       | What it does                                                                                                                              |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| [arcgis-docs-lookup](skills/arcgis/arcgis-docs-lookup/SKILL.md)             | Routes documentation questions to authoritative Esri sources, scopes Enterprise URLs by version, and supports deep research.              |
+| [arcade](skills/arcgis/arcade/SKILL.md)                                     | Authors Arcade expressions for the correct profile and verifies globals and functions at the target version.                              |
+| [arcgis-html-css](skills/arcgis/arcgis-html-css/SKILL.md)                   | Writes and repairs HTML/CSS for ArcGIS Online Hub text cards and Map Viewer popups using each surface's sanitizer rules.                  |
+| [js-sdk](skills/arcgis/js-sdk/SKILL.md)                                     | Builds and migrates ArcGIS Maps SDK for JavaScript apps with version-aware API and Calcite choices.                                       |
+| [python-notebook](skills/arcgis/python-notebook/SKILL.md)                   | Writes ArcGIS API for Python code for hosted notebooks or local installs, with a guard around destructive data operations.                |
+| [exb-widget](skills/arcgis/exb-widget/SKILL.md)                             | Builds Experience Builder widgets with target-specific version/tooling gates, implementation guidance, and runtime/deployment checks.    |
+| [arcgis-custom-data-feeds](skills/arcgis/arcgis-custom-data-feeds/SKILL.md) | Builds version-aware Node.js/Koop providers that expose external systems as ArcGIS Feature Services, with a guard around upstream writes. |
 
 `python-notebook`, `js-sdk`, and `arcgis-custom-data-feeds` each embed a destructive-operation guard: before any irreversible data call — a hosted-feature delete, or a Custom Data Feeds provider's upstream update/delete — the agent must name the target, show what it is, confirm it isn't production, and prefer a dry-run — so each skill stays self-contained.
 
@@ -30,15 +45,24 @@ Agent: reads arcade/SKILL.md → identifies the profile → pins the version →
 
 Each skill's one-line description stays in the agent's context; when your intent matches, the agent loads that skill's full instructions and follows them. Being explicit about the technology ("an **Experience Builder** widget", "the **ArcGIS Python API**") makes the match near-certain.
 
+For **The Chronicle Protocol**, say "Chronicle this" to request a checkpoint or ask to resume from a Chronicle. The skill is named `chronicle-protocol` to distinguish it from Copilot's session-history tool. Automatic checks at every session start require a pointer in the host's always-loaded project instructions; the skill alone does not install a startup hook.
+
 ## Installation
 
 **Via the `skills` CLI** — installs into your project's `.agents/skills/`:
 
 ```bash
-npx skills@latest add valdesrosier/arcgis-skills
+npx skills@latest add valdesrosier/skills
 ```
 
-**Or copy the folders** — copy the skill folder(s) you want from [`skills/`](skills/) into your project's `.agents/skills/` directory. Every skill is self-contained; `arcade` and `js-sdk` verify APIs through `arcgis-docs-lookup`, so include it if you want that step.
+List available skills or install only selected ones:
+
+```bash
+npx skills@latest add valdesrosier/skills --list
+npx skills@latest add valdesrosier/skills --skill arcade arcgis-docs-lookup
+```
+
+**Or copy the folders** — copy individual skill folders from [`skills/generic/`](skills/generic/) or [`skills/arcgis/`](skills/arcgis/) into your project's `.agents/skills/` directory. Copy the skill itself, not the category: `skills/arcgis/arcade/` becomes `.agents/skills/arcade/`. Every skill is self-contained; `arcade` and `js-sdk` verify APIs through `arcgis-docs-lookup`, so include it if you want that step.
 
 Either way, any skill-aware agent (GitHub Copilot, Claude, Codex) picks them up automatically whenever the workspace is open — no per-chat setup.
 
@@ -49,14 +73,14 @@ Updates are **pull-based** — there's no background auto-update. The skill file
 **If you installed via the CLI**, re-run the same command from your project root:
 
 ```bash
-npx skills@latest add valdesrosier/arcgis-skills
+npx skills@latest add valdesrosier/skills
 ```
 
 `add` is idempotent and doubles as the updater: it re-fetches the current version, rewrites the files under `.agents/skills/`, and refreshes the per-skill hashes in `skills-lock.json`. Review the diff and commit it like any other dependency bump — the changed hashes tell you exactly which skills moved.
 
 **If you copied the folders by hand**, re-copy the skill folder(s) from [`skills/`](skills/) (or `git pull` if you vendored this repo).
 
-There's no separate `update` subcommand — re-running `add` is the update path. Tie it to a trigger rather than checking at random: re-run when a new [release](https://github.com/valdesrosier/arcgis-skills/releases) is tagged, or fold it into your routine dependency hygiene.
+Re-run when a new [release](https://github.com/valdesrosier/skills/releases) is tagged, or fold it into your routine dependency hygiene. Use the same `--skill` selection when refreshing only a subset.
 
 ## Recommended: pair with Matt Pocock's skills
 
@@ -75,7 +99,9 @@ Nothing here edits or depends on his files — the composition is additive.
 
 ## Design principles
 
-- **No baked version facts.** Version relationships change (the Experience Builder build command and output path changed at 1.17). Skills encode the _procedure_ for discovering the current version and point at the live version anchor that owns their stack — the [Esri version matrix](https://developers.arcgis.com/javascript/latest/version-matrix/) for the JS-family skills, the [Enterprise SDK CDF guide](https://developers.arcgis.com/enterprise-sdk/guide/custom-data-feeds/) for Custom Data Feeds — rather than hardcoding a value that will silently go stale.
+All categories use focused descriptions, progressive disclosure, and self-contained skill folders. The ArcGIS skills also follow these domain-specific rules:
+
+- **No baked version facts.** Version relationships, build commands, and output paths change across releases. Skills encode the _procedure_ for discovering the target version and point at the live version anchor that owns their stack — the [Esri version matrix](https://developers.arcgis.com/javascript/latest/version-matrix/) for the JS-family skills, the [Enterprise SDK CDF guide](https://developers.arcgis.com/enterprise-sdk/guide/custom-data-feeds/) for Custom Data Feeds — rather than hardcoding a value that will silently go stale. Experience Builder also checks its exact-release documentation and installed build configuration; its historical build cutoff is [disputed](skills/arcgis/exb-widget/VERSIONS.md#build-commands-and-output).
 - **A safety guard for destructive data operations.** Before any irreversible data operation — a `truncate` / `delete` / `overwrite` / feature deletion against hosted data, or an editable Custom Data Feeds provider's upstream update/delete — the agent must name the target, show what it is, confirm it isn't production, and prefer a dry-run — pulled deterministically as an explicit step, never left to chance.
 - **Never cite retired products.** Documentation lookups route to current sources and explicitly avoid ArcMap, ArcCatalog, and ArcGIS Desktop docs.
 
@@ -87,7 +113,26 @@ Every skill is portable — drop a single folder into any skill-aware repo and i
 
 ## Repository layout
 
-Skills are published under a top-level [`skills/`](skills/) directory — the [skills.sh](https://skills.sh) source layout that `npx skills add` reads — and this is the only copy committed to the repo. For local development they're also mirrored under `.agents/skills/`, which is **git-ignored**: that folder additionally holds Matt Pocock's skills (installed as a dev dependency), and neither his skills nor the mirror are redistributed here. Regenerate the mirror by copying from `skills/`.
+Skills are published under [`skills/`](skills/), grouped by category. The `skills` CLI discovers the nested skill folders; category names do not change skill names or invocation.
+
+```text
+skills/
+        generic/                       # Cross-stack workflows
+                chronicle-protocol/
+                demo-director/
+        arcgis/                        # Esri / ArcGIS workflows
+                arcade/
+                arcgis-custom-data-feeds/
+                arcgis-docs-lookup/
+                arcgis-html-css/
+                exb-widget/
+                js-sdk/
+                python-notebook/
+```
+
+Each skill lives at `skills/<category>/<skill-name>/SKILL.md`, with any references and agent metadata inside that skill's folder. Add platform-independent skills to `generic/` and Esri-specific skills to `arcgis/`.
+
+These are the canonical sources. For local development, individual skills are also mirrored at `.agents/skills/<skill-name>/`, which is **git-ignored**. That directory additionally holds Matt Pocock's skills as development dependencies; neither those dependencies nor the mirror are redistributed here. Regenerate a mirror by copying the individual skill folder from its category, keeping the installed layout flat.
 
 Each skill is self-contained: the destructive-operation guard is inlined into `js-sdk`, `python-notebook`, and `arcgis-custom-data-feeds` rather than shared, so nothing is lost when the CLI copies a single skill folder.
 

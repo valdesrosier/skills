@@ -1,6 +1,6 @@
-# ArcGIS Skills
+# Skills
 
-Terminology specific to this repo's ArcGIS skill set, layered on top of Matt Pocock's skill-authoring system. Skill-system terms (model-invoked, user-invoked, context pointer, leading word, etc.) are defined in that system's glossary and are not restated here.
+Terminology for this repo's skill collection. The terms below apply to the ArcGIS-specific skills. Skill-system terms (model-invoked, user-invoked, context pointer, leading word, etc.) follow Matt Pocock's skill-authoring system and are not restated here.
 
 ## Language
 
