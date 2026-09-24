@@ -28,8 +28,10 @@ For general-purpose workflows such as code review, debugging, research, and test
 | [arcgis-html-css](skills/arcgis/arcgis-html-css/SKILL.md)                   | Writes and repairs HTML/CSS for ArcGIS Online Hub text cards and Map Viewer popups using each surface's sanitizer rules.                  |
 | [js-sdk](skills/arcgis/js-sdk/SKILL.md)                                     | Builds and migrates ArcGIS Maps SDK for JavaScript apps with version-aware API and Calcite choices.                                       |
 | [python-notebook](skills/arcgis/python-notebook/SKILL.md)                   | Writes ArcGIS API for Python code for hosted notebooks or local installs, with a guard around destructive data operations.                |
-| [exb-widget](skills/arcgis/exb-widget/SKILL.md)                             | Builds Experience Builder widgets with target-specific version/tooling gates, implementation guidance, and runtime/deployment checks.    |
+| [exb-widget](skills/arcgis/exb-widget/SKILL.md)                             | Builds Experience Builder widgets with target-specific version/tooling gates, implementation guidance, and runtime/deployment checks.     |
 | [arcgis-custom-data-feeds](skills/arcgis/arcgis-custom-data-feeds/SKILL.md) | Builds version-aware Node.js/Koop providers that expose external systems as ArcGIS Feature Services, with a guard around upstream writes. |
+
+For a more comprehensive alternative to `exb-widget`, see [arcgis-exb-widget-dev](https://github.com/Esri/arcgis-experience-builder-sdk-resources/tree/master/skills/arcgis-exb-widget-dev), designed by Esri's Experience Builder product team.
 
 `python-notebook`, `js-sdk`, and `arcgis-custom-data-feeds` each embed a destructive-operation guard: before any irreversible data call — a hosted-feature delete, or a Custom Data Feeds provider's upstream update/delete — the agent must name the target, show what it is, confirm it isn't production, and prefer a dry-run — so each skill stays self-contained.
 
